@@ -114,7 +114,7 @@ void MessageGenerator::Generate(io::Printer* printer) {
   
   printer->Print(
     vars,
-    "$access_level$ sealed class $class_name$ : pb::IMessage {\n");
+    "$access_level$ partial class $class_name$ : pb::IMessage {\n");
   printer->Indent();
 
   // All static fields and properties
@@ -401,6 +401,15 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
   WriteGeneratedCodeAttributes(printer);
   printer->Print("public void MergeFrom(pb::CodedInputStream input) {\n");
   printer->Indent();
+
+  for (int i = 0; i < fields_by_number().size(); i++) {
+    const FieldDescriptor* field = fields_by_number()[i];
+	if (field->is_repeated())
+	{
+	  string clearLine = field->camelcase_name() + "_.Clear();\n";
+	  printer->Print(clearLine.c_str());
+	}
+  }
   printer->Print(
     "uint tag;\n"
     "while ((tag = input.ReadTag()) != 0) {\n"
