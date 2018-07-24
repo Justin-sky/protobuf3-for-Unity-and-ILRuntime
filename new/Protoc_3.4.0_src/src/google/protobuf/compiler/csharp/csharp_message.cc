@@ -48,6 +48,7 @@
 #include <google/protobuf/compiler/csharp/csharp_helpers.h>
 #include <google/protobuf/compiler/csharp/csharp_message.h>
 #include <google/protobuf/compiler/csharp/csharp_names.h>
+#include "google/protobuf/type.pb.h"
 
 using google::protobuf::internal::scoped_ptr;
 
@@ -406,8 +407,87 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
     const FieldDescriptor* field = fields_by_number()[i];
 	if (field->is_repeated())
 	{
-	  string clearLine = field->camelcase_name() + "_.Clear();\n";
-	  printer->Print(clearLine.c_str());
+		string clearLine = field->camelcase_name() + "_.Clear();\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_BOOL)
+	{
+		string clearLine = field->camelcase_name() + "_ = false;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_UINT32)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_UINT64)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_INT32)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_INT64)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_SINT32)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_SINT64)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_FIXED32)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_FIXED64)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_SFIXED32)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_SFIXED64)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_FLOAT)
+	{
+		string clearLine = field->camelcase_name() + "_ = 0f;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
+	if (field->type() == FieldDescriptor::TYPE_STRING)
+	{
+		string clearLine = field->camelcase_name() + "_ = \"\";\n";
+		printer->Print(clearLine.c_str());
+		continue;
 	}
   }
   printer->Print(
