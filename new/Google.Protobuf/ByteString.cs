@@ -34,9 +34,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Google.Protobuf.Compatibility;
-
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Google.Protobuf
 {
@@ -47,18 +48,18 @@ namespace Google.Protobuf
     {
         private static readonly ByteString empty = new ByteString(new byte[0]);
 
-        private readonly byte[] bytes;
+        public byte[] bytes;
 
         /// <summary>
         /// Unsafe operations that can cause IO Failure and/or other catestrophic side-effects.
         /// </summary>
-        internal static class Unsafe
+        public static class Unsafe
         {
             /// <summary>
             /// Constructs a new ByteString from the given byte array. The array is
             /// *not* copied, and must not be modified after this constructor is called.
             /// </summary>
-            internal static ByteString FromBytes(byte[] bytes)
+            public static ByteString FromBytes(byte[] bytes)
             {
                 return new ByteString(bytes);
             }
@@ -67,7 +68,7 @@ namespace Google.Protobuf
             /// Provides direct, unrestricted access to the bytes contained in this instance.
             /// You must not modify or resize the byte array returned by this method.
             /// </summary>
-            internal static byte[] GetBuffer(ByteString bytes)
+            public static byte[] GetBuffer(ByteString bytes)
             {
                 return bytes.bytes;
             }
@@ -80,12 +81,19 @@ namespace Google.Protobuf
         {
             return new ByteString(bytes);
         }
+        
+        public ByteString()
+        {}
 
+        public ByteString(List<byte> list)
+        {
+            this.bytes = list.ToArray();
+        }
         /// <summary>
         /// Constructs a new ByteString from the given byte array. The array is
         /// *not* copied, and must not be modified after this constructor is called.
         /// </summary>
-        private ByteString(byte[] bytes)
+        public ByteString(byte[] bytes)
         {
             this.bytes = bytes;
         }
@@ -101,6 +109,7 @@ namespace Google.Protobuf
         /// <summary>
         /// Returns the length of this ByteString in bytes.
         /// </summary>
+        [BsonIgnore]
         public int Length
         {
             get { return bytes.Length; }
@@ -109,6 +118,7 @@ namespace Google.Protobuf
         /// <summary>
         /// Returns <c>true</c> if this byte string is empty, <c>false</c> otherwise.
         /// </summary>
+        [BsonIgnore]
         public bool IsEmpty
         {
             get { return Length == 0; }
@@ -205,6 +215,7 @@ namespace Google.Protobuf
         /// <summary>
         /// Retuns the byte at the given index.
         /// </summary>
+        [BsonIgnore]
         public byte this[int index]
         {
             get { return bytes[index]; }

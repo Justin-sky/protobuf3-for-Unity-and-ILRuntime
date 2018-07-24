@@ -51,8 +51,8 @@ namespace Google.Protobuf.Collections
         private static readonly T[] EmptyArray = new T[0];
         private const int MinArraySize = 8;
 
-        private T[] array = EmptyArray;
-        private int count = 0;
+        public T[] array = EmptyArray;
+        public int count = 0;
 
         /// <summary>
         /// Adds the entries from the given input stream, decoding them with the specified codec.
@@ -206,7 +206,8 @@ namespace Google.Protobuf.Collections
         /// </summary>
         public void Clear()
         {
-            array = EmptyArray;
+            // ET修改，这里不释放数组，避免gc
+            //array = EmptyArray;
             count = 0;
         }
 
