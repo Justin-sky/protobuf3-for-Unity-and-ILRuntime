@@ -489,6 +489,12 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
 		printer->Print(clearLine.c_str());
 		continue;
 	}
+	if (field->type() == FieldDescriptor::TYPE_MESSAGE)
+	{
+		string clearLine = field->camelcase_name() + "_ = null;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
   }
   printer->Print(
     "uint tag;\n"
