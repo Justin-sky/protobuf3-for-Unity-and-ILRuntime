@@ -121,7 +121,7 @@ void MessageGenerator::Generate(io::Printer* printer) {
   // All static fields and properties
   printer->Print(
 	  vars,
-	  "private static readonly pb::MessageParser<$class_name$> _parser = new pb::MessageParser<$class_name$>(() => new $class_name$());\n");
+	  "private static readonly pb::MessageParser<$class_name$> _parser = new pb::MessageParser<$class_name$>(() => ($class_name$)MessagePool.Instance.Fetch(typeof($class_name$)));\n");
 
   WriteGeneratedCodeAttributes(printer);
 
@@ -402,12 +402,16 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
   WriteGeneratedCodeAttributes(printer);
   printer->Print("public void MergeFrom(pb::CodedInputStream input) {\n");
   printer->Indent();
-
   for (int i = 0; i < fields_by_number().size(); i++) {
     const FieldDescriptor* field = fields_by_number()[i];
 	if (field->is_repeated())
 	{
-		string clearLine = field->camelcase_name() + "_.Clear();\n";
+		string typen = GetClassName(field->message_type());
+		string clearLine = 
+			"if (typeof(" + typen + ").IsClass) { for (int i = 0; i < " + field->camelcase_name() + "_.Count; i++) { MessagePool.Instance.Recycle(" + field->camelcase_name() + "_[i]); } }\n";
+
+
+		clearLine += field->camelcase_name() + "_.Clear();\n";
 		printer->Print(clearLine.c_str());
 		continue;
 	}
@@ -491,7 +495,7 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
 	}
 	if (field->type() == FieldDescriptor::TYPE_MESSAGE)
 	{
-		string clearLine = field->camelcase_name() + "_ = null;\n";
+		string clearLine = "if (" + field->camelcase_name() + "_ != null) MessagePool.Instance.Recycle(" + field->camelcase_name() + "_); " + field->camelcase_name() + "_ = null;\n";
 		printer->Print(clearLine.c_str());
 		continue;
 	}
