@@ -406,10 +406,12 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
     const FieldDescriptor* field = fields_by_number()[i];
 	if (field->is_repeated())
 	{
-		string typen = GetClassName(field->message_type());
-		string clearLine = 
-			"if (typeof(" + typen + ").IsClass) { for (int i = 0; i < " + field->camelcase_name() + "_.Count; i++) { MessagePool.Instance.Recycle(" + field->camelcase_name() + "_[i]); } }\n";
-
+		string clearLine = "";
+		if (field->message_type() != NULL)
+		{
+			string typen = GetClassName(field->message_type());
+			clearLine += "for (int i = 0; i < " + field->camelcase_name() + "_.Count; i++) { MessagePool.Instance.Recycle(" + field->camelcase_name() + "_[i]); }\n";
+		}
 
 		clearLine += field->camelcase_name() + "_.Clear();\n";
 		printer->Print(clearLine.c_str());
