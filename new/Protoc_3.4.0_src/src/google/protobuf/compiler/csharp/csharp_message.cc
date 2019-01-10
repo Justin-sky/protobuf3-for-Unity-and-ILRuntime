@@ -495,6 +495,12 @@ void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {
 		printer->Print(clearLine.c_str());
 		continue;
 	}
+	if (field->type() == FieldDescriptor::TYPE_BYTES)
+	{
+		string clearLine = field->camelcase_name() + "_ = pb::ByteString.Empty;\n";
+		printer->Print(clearLine.c_str());
+		continue;
+	}
 	if (field->type() == FieldDescriptor::TYPE_MESSAGE)
 	{
 		string clearLine = "if (" + field->camelcase_name() + "_ != null) MessagePool.Instance.Recycle(" + field->camelcase_name() + "_); " + field->camelcase_name() + "_ = null;\n";
